@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đề Nghị Duyệt Chi - Đơn hàng MICE (Theo chuẩn Kế toán ACC)</title>
+  <!-- Allowlisted Tailwind in Antigravity -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .vntrip-card-box {
+      border: 1px solid #1890ff;
+      border-radius: 4px;
+    }
+    .vntrip-btn-primary {
+      background-color: #0084ff;
+    }
+    .vntrip-btn-primary:hover {
+      background-color: #0070d8;
+    }
+    /* Fallback size control for all icons */
+    svg, i {
+      max-width: 20px;
+      max-height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased p-4 md:p-6 font-sans">
+
+  <div class="max-w-4xl mx-auto space-y-4">
+    
+    <!-- POPUP / FORM CHÍNH: ĐỀ NGHỊ DUYỆT CHI ĐƠN MICE (CHUẨN KẾ TOÁN ACC) -->
+    <div class="bg-white rounded-md shadow-xl border border-slate-300 overflow-hidden text-sm">
+      
+      <!-- Header Form -->
+      <div class="px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-white">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="text-lg font-bold text-slate-800 uppercase tracking-tight">ĐỀ NGHỊ DUYỆT CHI</h1>
+            <span id="badgeRequestStatus" class="text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-0.5 rounded">
+              Chờ duyệt Cấp 1
+            </span>
+            <span class="text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded">
+              Đơn MICE
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1">
+            <span>Mã ĐNDC: <strong class="text-blue-600 font-bold" id="txtDndcCode">VNTDNDC2026M002</strong> <i class="fa-regular fa-copy cursor-pointer text-slate-400 hover:text-slate-600 ml-0.5" onclick="copyText('VNTDNDC2026M002')" title="Sao chép"></i></span>
+          </div>
+        </div>
+
+        <!-- Toggle góc nhìn test phân quyền -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400 font-medium hidden sm:inline">Chuyển góc nhìn test phân quyền:</span>
+          <div class="flex border border-slate-200 rounded overflow-hidden text-xs">
+            <button id="btnViewMICE" onclick="switchView('MICE')" class="px-3 py-1.5 bg-blue-50 text-blue-600 font-semibold border-r border-slate-200 transition">
+              Góc nhìn MICE
+            </button>
+            <button id="btnViewACC" onclick="switchView('ACC')" class="px-3 py-1.5 bg-white text-slate-500 hover:bg-slate-50 font-normal transition">
+              Góc nhìn Kế toán (ACC)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+
+        <!-- 1. THÔNG TIN ĐƠN HÀNG -->
+        <div class="vntrip-card-box p-4 bg-white">
+          <div class="flex flex-wrap items-center justify-between pb-2 border-b border-blue-100 mb-3 gap-2">
+            <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">
+              1. THÔNG TIN ĐƠN HÀNG
+            </span>
+            <div class="flex items-center gap-3 text-xs text-slate-600 font-medium">
+              <span>Mã đơn hàng: <strong class="text-slate-800 font-mono font-bold">VNTRIP2026E52BM</strong> <i class="fa-regular fa-copy cursor-pointer text-slate-400 hover:text-slate-600 ml-0.5" onclick="copyText('VNTRIP2026E52BM')" title="Sao chép"></i></span>
+              <span class="text-slate-300">|</span>
+              <span>Mã trip: <strong class="text-slate-800 font-mono font-bold">TRIPGJAY1J (348999)</strong></span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+            <div>
+              <span class="text-slate-500 block mb-1">Khách hàng Doanh nghiệp (Corp):</span>
+              <span class="font-bold text-slate-800 text-sm">CÔNG TY TNHH CÔNG NGHỆ VNTRIP</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block mb-1">Loại dịch vụ:</span>
+              <span class="font-bold text-slate-800 text-sm">Visa</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block mb-1">Tên dịch vụ:</span>
+              <span class="font-bold text-slate-900 text-sm">Nguyễn Ngọc Thành</span>
+            </div>
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">
+                Giai đoạn thực hiện dịch vụ <span class="text-red-500">*</span>:
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="serviceDateRangeInput" 
+                  value="09/10/2026 - 12/10/2026" 
+                  placeholder="DD/MM/YYYY - DD/MM/YYYY..." 
+                  required
+                  class="w-full bg-white border border-slate-300 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-medium pr-7"
+                >
+                <i class="fa-regular fa-calendar-days absolute right-2.5 top-2 text-slate-400 text-xs pointer-events-none"></i>
+              </div>
+            </div>
+            <div class="sm:col-span-2 md:col-span-2">
+              <label class="block text-slate-600 font-medium mb-1">
+                Hạn thanh toán của Corp cho đơn hàng <span class="text-red-500">*</span>:
+              </label>
+              <div class="relative max-w-sm">
+                <input 
+                  type="text" 
+                  id="corpPaymentDeadlineInput" 
+                  value="25/10/2026" 
+                  placeholder="DD/MM/YYYY..." 
+                  required
+                  class="w-full bg-white border border-slate-300 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-medium pr-7"
+                >
+                <i class="fa-regular fa-calendar absolute right-2.5 top-2 text-slate-400 text-xs pointer-events-none"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. CHI TIẾT DỊCH VỤ -->
+        <div class="vntrip-card-box p-4 bg-white">
+          <div class="flex items-center justify-between pb-2 border-b border-blue-100 mb-3">
+            <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">
+              2. CHI TIẾT DỊCH VỤ
+            </span>
+          </div>
+
+          <div class="overflow-x-auto border border-slate-200 rounded">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-2.5">Dịch vụ</th>
+                  <th class="p-2.5 text-right">Giá nhập</th>
+                  <th class="p-2.5 text-right">Giá bán</th>
+                  <th class="p-2.5 text-center">Số lượng</th>
+                  <th class="p-2.5 text-center">Thuế (VAT)</th>
+                  <th class="p-2.5 text-right font-bold text-slate-900">Tổng tiền</th>
+                  <th class="p-2.5 text-right font-bold text-slate-900">Lợi nhuận</th>
+                  <th class="p-2.5 text-right font-bold text-blue-600">Markup</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="p-2.5 font-medium text-slate-800">
+                    Visa: Nguyễn Ngọc Thành
+                  </td>
+                  <td class="p-2.5 text-right font-semibold text-slate-800 font-mono">
+                    56.000 đ
+                  </td>
+                  <td class="p-2.5 text-right font-medium text-slate-700 font-mono">
+                    80.000 đ
+                  </td>
+                  <td class="p-2.5 text-center font-medium text-slate-800">1</td>
+                  <td class="p-2.5 text-center text-slate-500">Không</td>
+                  <td class="p-2.5 text-right font-bold text-slate-800 font-mono">80.000 đ</td>
+                  <td class="p-2.5 text-right font-semibold text-slate-800 font-mono">24.000 đ</td>
+                  <td class="p-2.5 text-right font-bold text-blue-600 font-mono">
+                    42.86%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. THÔNG TIN THANH TOÁN -->
+        <div class="vntrip-card-box p-4 bg-white">
+          <div class="pb-2.5 border-b border-blue-100 mb-3 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">
+              3. THÔNG TIN THANH TOÁN
+            </span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            
+            <!-- Hàng 1: Tên NCC, MST, Số tiền thanh toán, Hạn thanh toán NCC -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 p-3 rounded border border-slate-200">
+              <div>
+                <label class="block text-slate-500 text-[11px]">Tên Nhà cung cấp (NCC):</label>
+                <div class="font-bold text-slate-800 text-xs mt-0.5">Vntrip</div>
+              </div>
+              <div>
+                <label class="block text-slate-500 text-[11px]">Mã số thuế NCC:</label>
+                <div class="font-mono font-bold text-slate-800 text-xs mt-0.5">2346543213</div>
+              </div>
+              <div>
+                <label class="block text-slate-700 font-bold text-[11px]">
+                  Tổng tiền thanh toán cho NCC <span class="text-red-500">*</span>:
+                </label>
+                <div class="relative mt-0.5">
+                  <input 
+                    type="text" 
+                    id="paymentAmountInput"
+                    value="56.000" 
+                    oninput="checkContractRule(this.value)"
+                    class="w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500 font-mono"
+                  >
+                  <span class="absolute right-2 top-1 text-[10px] text-slate-400 font-bold">VNĐ</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-slate-700 font-bold text-[11px]">
+                  Thời hạn thanh toán cho NCC <span class="text-red-500">*</span>:
+                </label>
+                <div class="relative mt-0.5">
+                  <input 
+                    type="text" 
+                    id="paymentDeadlineInput"
+                    value="15/10/2026"
+                    required
+                    class="w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:border-blue-500 pr-6 font-medium"
+                  >
+                  <i class="fa-regular fa-calendar absolute right-2 top-1.5 text-slate-400 text-xs pointer-events-none"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hàng 2: Thông tin tài khoản thụ hưởng của NCC -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="block text-slate-600 font-medium mb-1">
+                  Ngân hàng thụ hưởng <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <select 
+                    id="bankSelect" 
+                    class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-slate-800 text-xs appearance-none focus:outline-none focus:border-blue-500 font-medium"
+                  >
+                    <option value="TCB" selected>Techcombank (TCB) - Ngân hàng TMCP Kỹ Thương Việt Nam</option>
+                    <option value="OCB">Ngân hàng TMCP Phương Đông (OCB)</option>
+                    <option value="CTG">VietinBank (CTG) - Ngân hàng Công Thương Việt Nam</option>
+                    <option value="VCB">Vietcombank (VCB) - Ngân hàng Ngoại Thương Việt Nam</option>
+                    <option value="BIDV">BIDV - Ngân hàng Đầu tư và Phát triển Việt Nam</option>
+                    <option value="MB">MBBank (MB) - Ngân hàng TMCP Quân Đội</option>
+                    <option value="ACB">ACB - Ngân hàng TMCP Á Châu</option>
+                    <option value="VPB">VPBank - Việt Nam Thịnh Vượng</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-slate-600 font-medium mb-1">
+                  Chi nhánh ngân hàng
+                </label>
+                <input 
+                  type="text" 
+                  id="branchInput" 
+                  value="Chi nhánh Hội Sở, Hà Nội" 
+                  placeholder="Nhập chi nhánh ngân hàng..." 
+                  class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                >
+              </div>
+            </div>
+
+            <!-- Hàng 3: Số tài khoản & Tên chủ tài khoản -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-600 font-medium mb-1">
+                  Số tài khoản thụ hưởng NCC <span class="text-red-500">*</span>
+                </label>
+                <div class="relative flex items-center">
+                  <input 
+                    type="text" 
+                    id="accountNumberInput" 
+                    value="5555666611111" 
+                    placeholder="Nhập số tài khoản..." 
+                    class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-xs font-mono font-bold text-blue-600 focus:outline-none focus:border-blue-500 pr-10"
+                  >
+                  <button 
+                    type="button" 
+                    onclick="copyFieldValue('accountNumberInput')" 
+                    class="absolute right-2.5 text-slate-400 hover:text-slate-600 p-1" 
+                    title="Sao chép số tài khoản"
+                  >
+                    <i class="fa-regular fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-slate-600 font-medium mb-1">
+                  Tên chủ tài khoản <span class="text-red-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="accountNameInput" 
+                  value="CÔNG TY TNHH VNTRIP" 
+                  oninput="this.value = this.value.toUpperCase();"
+                  placeholder="TÊN CHỦ TÀI KHOẢN (VIẾT HOA)..." 
+                  class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-xs font-semibold text-slate-800 uppercase focus:outline-none focus:border-blue-500"
+                >
+              </div>
+            </div>
+
+            <!-- Hàng 4: Nội dung chuyển khoản chuẩn -->
+            <div>
+              <label class="block text-slate-600 font-medium mb-1">
+                Nội dung chuyển khoản chuẩn
+              </label>
+              <div class="relative flex items-center">
+                <input 
+                  type="text" 
+                  id="transferContentInput" 
+                  value="VNTRIP2026E52BM-THANH TOAN VISA NGUYEN NGOC THANH" 
+                  class="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs font-mono text-slate-800 font-medium focus:outline-none focus:border-blue-500 pr-10"
+                >
+                <button 
+                  type="button" 
+                  onclick="copyFieldValue('transferContentInput')" 
+                  class="absolute right-2.5 text-slate-400 hover:text-slate-600 p-1" 
+                  title="Sao chép nội dung chuyển khoản"
+                >
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 4. CHỨNG TỪ NỘI BỘ & HỢP ĐỒNG VỚI NCC -->
+        <div class="vntrip-card-box p-4 bg-white">
+          <div class="flex items-center justify-between pb-2 border-b border-blue-100 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">
+                4. CHỨNG TỪ NỘI BỘ & HỢP ĐỒNG NCC
+              </span>
+              <span id="badgeContractRequired" class="hidden text-[10px] font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
+                Bắt buộc có Hợp đồng (≥ 5.000.000 đ)
+              </span>
+            </div>
+            <div>
+              <input type="file" id="fileInternalDocInput" onchange="handleInternalDocUpload(event)" class="hidden">
+              <button id="btnUploadInternalDoc" onclick="document.getElementById('fileInternalDocInput').click()" class="text-xs text-blue-600 border border-blue-200 hover:bg-blue-50 px-2.5 py-1 rounded bg-white font-medium flex items-center gap-1 transition shadow-xs">
+                <i class="fa-solid fa-plus text-[10px]"></i> Tải lên chứng từ / Hợp đồng
+              </button>
+            </div>
+          </div>
+
+          <!-- Thông báo rule của Kế toán -->
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 text-[11px] text-slate-600 mb-3 flex items-start gap-1.5">
+            <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+            <div>
+              <strong>Quy định:</strong> Các đơn hàng có giá trị thanh toán cho NCC <strong>từ 5.000.000 đ trở lên</strong> bắt buộc phải có <strong>Hợp đồng với NCC</strong>.
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs" id="internalDocListContainer">
+            <!-- File 1: Bảng kê chi tiết dịch vụ -->
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded">
+              <div class="flex items-center gap-2 text-slate-700">
+                <i class="fa-solid fa-file-excel text-slate-500 text-sm"></i>
+                <div>
+                  <span class="font-medium">Bang_ke_chi_tiet_dich_vu_Visa_VNTRIP2026E52BM.xlsx</span>
+                  <span class="text-[10px] text-slate-400 ml-1.5">(Bảng kê giá nhập, giá bán, thuế, lợi nhuận)</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button onclick="alert('Đang mở xem bảng kê chi tiết dịch vụ...')" class="text-blue-600 hover:text-blue-700 font-medium">Xem</button>
+                <button onclick="this.closest('.flex').remove()" class="mice-doc-action text-red-500 hover:text-red-700 text-xs font-medium" title="Xóa">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- File 2: Báo giá NCC -->
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded">
+              <div class="flex items-center gap-2 text-slate-700">
+                <i class="fa-solid fa-file-pdf text-slate-500 text-sm"></i>
+                <div>
+                  <span class="font-medium">Bao_gia_NCC_Visa_Vntrip_Oct2026.pdf</span>
+                  <span class="text-[10px] text-slate-400 ml-1.5">(Báo giá NCC xác nhận)</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button onclick="alert('Đang mở xem file báo giá...')" class="text-blue-600 hover:text-blue-700 font-medium">Xem</button>
+                <button onclick="this.closest('.flex').remove()" class="mice-doc-action text-red-500 hover:text-red-700 text-xs font-medium" title="Xóa">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. ỦY NHIỆM CHI -->
+        <div class="vntrip-card-box p-4 bg-white">
+          <div class="flex items-center justify-between pb-2 border-b border-blue-100 mb-3">
+            <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">
+              5. ỦY NHIỆM CHI
+            </span>
+            <div>
+              <input type="file" id="fileUncDocInput" onchange="handleUncDocUpload(event)" class="hidden">
+              <button id="btnUploadUncDoc" onclick="document.getElementById('fileUncDocInput').click()" class="text-xs text-blue-600 border border-blue-200 hover:bg-blue-50 px-2.5 py-1 rounded bg-white cursor-pointer font-medium flex items-center gap-1 transition shadow-xs">
+                <i class="fa-solid fa-plus text-[10px]"></i> Tải lên Ủy nhiệm chi
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs" id="uncDocListContainer">
+            <!-- File UNC Kế toán tải lên sau khi chuyển khoản -->
+            <div id="rowUncDoc" class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded">
+              <div class="flex items-center gap-2 text-slate-700">
+                <i class="fa-solid fa-file-invoice-dollar text-slate-500 text-sm"></i>
+                <div>
+                  <span class="font-medium">UNC_Techcombank_56000VND_FT261030998.pdf</span>
+                  <span class="text-[10px] text-blue-600 font-medium ml-1.5">[Ủy nhiệm chi - Kế toán đã tải lên]</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button onclick="alert('Đang mở xem Ủy nhiệm chi UNC...')" class="text-blue-600 hover:text-blue-700 font-medium">Xem</button>
+                <button onclick="removeUncRow()" class="text-red-500 hover:text-red-700 text-xs font-medium" title="Xóa chứng từ UNC">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center gap-3">
+        <div>
+          <button type="button" onclick="alert('Đã đóng form Đề nghị duyệt chi')" class="px-5 py-2 border border-slate-300 bg-white hover:bg-slate-50 rounded text-xs font-medium text-slate-700 transition">
+            Đóng
+          </button>
+        </div>
+
+        <!-- Cụm nút hành động cho MICE -->
+        <div id="footerActionsMICE" class="flex items-center gap-2">
+          <button onclick="saveDraft()" class="px-4 py-2 border border-slate-300 bg-white hover:bg-slate-100 rounded text-xs font-medium text-slate-700 transition">
+            Lưu nháp
+          </button>
+          <button onclick="submitFormMICE()" class="vntrip-btn-primary text-white px-6 py-2 rounded text-xs font-semibold hover:opacity-95 transition shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-paper-plane text-xs"></i> Gửi đề nghị duyệt chi
+          </button>
+        </div>
+
+        <!-- Cụm nút hành động cho Kế toán (ACC) -->
+        <div id="footerActionsACC" class="hidden flex items-center gap-2.5">
+          <button type="button" onclick="openRejectModal()" class="px-4 py-2 border border-slate-300 text-slate-600 bg-white hover:bg-slate-50 rounded text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-xmark text-xs"></i> Từ chối
+          </button>
+          <button type="button" onclick="approveRequestACC()" class="px-6 py-2 vntrip-btn-primary text-white rounded text-xs font-semibold hover:opacity-95 transition shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-check text-xs"></i> Duyệt chi & Đi tiền
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- POPUP TỪ CHỐI DUYỆT CHI (DÀNH CHO KẾ TOÁN) -->
+    <div id="rejectModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden text-sm">
+        <!-- Header Popup -->
+        <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            <h3 class="font-bold text-slate-800 text-sm">Từ chối đề nghị duyệt chi</h3>
+          </div>
+          <button onclick="closeRejectModal()" class="text-slate-400 hover:text-slate-600 p-1">
+            <i class="fa-solid fa-xmark text-base"></i>
+          </button>
+        </div>
+
+        <!-- Body Popup -->
+        <div class="p-5 space-y-3">
+          <p class="text-xs text-slate-700 font-medium">
+            Vui lòng nhập lý do từ chối:
+          </p>
+          <div>
+            <textarea 
+              id="rejectReasonInput" 
+              rows="3" 
+              placeholder="Ví dụ: Tỷ lệ Markup chưa đạt quy định, thiếu hợp đồng với NCC trên 5 triệu, sai thông tin STK..."
+              class="w-full text-xs p-2.5 border border-slate-300 rounded focus:outline-none focus:border-blue-500 text-slate-800 resize-none font-normal"
+            ></textarea>
+            <span id="rejectErrorMsg" class="hidden text-[11px] text-red-500 mt-1 block">
+              <i class="fa-solid fa-circle-exclamation mr-1"></i>Vui lòng nhập lý do từ chối!
+            </span>
+          </div>
+        </div>
+
+        <!-- Footer Popup -->
+        <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end items-center gap-2.5">
+          <button onclick="closeRejectModal()" class="px-4 py-2 border border-slate-300 bg-white hover:bg-slate-100 rounded text-xs font-medium text-slate-700 transition">
+            Đóng
+          </button>
+          <button onclick="confirmReject()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-check text-xs"></i> Xác nhận từ chối
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BẢNG TÓM TẮT ĐỐI SOÁT YÊU CẦU CỦA KẾ TOÁN (ACC CHECKLIST) -->
+    <div class="bg-white rounded border border-slate-200 p-4 text-xs text-slate-600 space-y-3 shadow-sm">
+      <div class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+        <i class="fa-solid fa-clipboard-check text-blue-600"></i> Đối soát checklist duyệt chi theo yêu cầu Kế toán (ACC):
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded border border-slate-200 space-y-1.5">
+          <div class="font-bold text-slate-800 flex items-center gap-1">
+            <i class="fa-solid fa-file-lines text-blue-600"></i> 1. Thông tin Đơn hàng
+          </div>
+          <ul class="list-disc pl-4 space-y-1 text-slate-600">
+            <li>Mã đơn hàng: <strong>VNTRIP2026E52BM</strong> (Cạnh mã trip: TRIPGJAY1J)</li>
+            <li>Dịch vụ: <strong>Loại DV: Visa</strong> | <strong>Tên DV: Nguyễn Ngọc Thành</strong></li>
+            <li>Khách hàng: <strong>CÔNG TY TNHH CÔNG NGHỆ VNTRIP</strong></li>
+            <li>Giai đoạn thực hiện: <strong>09/10/2026 → 12/10/2026</strong> (Điền tay & Bắt buộc)</li>
+            <li>Hạn thanh toán của Corp: <strong>25/10/2026</strong> (Điền tay & Bắt buộc, chỉ MICE sửa, ACC disable)</li>
+          </ul>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded border border-slate-200 space-y-1.5">
+          <div class="font-bold text-slate-800 flex items-center gap-1">
+            <i class="fa-solid fa-receipt text-blue-600"></i> 2. Chi tiết dịch vụ & Thanh toán
+          </div>
+          <ul class="list-disc pl-4 space-y-1 text-slate-600">
+            <li>Chi tiết dịch vụ: Giá nhập 56.000 đ | Giá bán 80.000 đ | Lợi nhuận <strong>24.000 đ</strong> | Markup <strong>42.86%</strong></li>
+            <li>Tên NCC: <strong>Vntrip</strong> | MST NCC: <strong>2346543213</strong></li>
+            <li>STK thụ hưởng: <strong>5555666611111</strong> tại <strong>Techcombank</strong></li>
+            <li>Thời hạn thanh toán NCC: <strong>15/10/2026</strong> (Bắt buộc, chỉ chọn ngày)</li>
+            <li>Hợp đồng NCC: <strong>Bắt buộc nếu tiền thanh toán ≥ 5.000.000 đ</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC TƯƠNG TÁC -->
+  <script>
+    let currentRole = 'MICE';
+
+    function checkContractRule(amountStr) {
+      const cleanNum = parseFloat(amountStr.replace(/[^0-9]/g, '')) || 0;
+      const badge = document.getElementById('badgeContractRequired');
+      if (cleanNum >= 5000000) {
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function switchView(role) {
+      currentRole = role;
+      const btnMICE = document.getElementById('btnViewMICE');
+      const btnACC = document.getElementById('btnViewACC');
+
+      // Khối Thông tin đơn hàng
+      const serviceDateRangeInput = document.getElementById('serviceDateRangeInput');
+      const corpPaymentDeadlineInput = document.getElementById('corpPaymentDeadlineInput');
+
+      // Khối Thanh toán
+      const paymentAmountInput = document.getElementById('paymentAmountInput');
+      const paymentDeadlineInput = document.getElementById('paymentDeadlineInput');
+
+      // Khối Chứng từ
+      const btnUploadInternalDoc = document.getElementById('btnUploadInternalDoc');
+      const btnUploadUncDoc = document.getElementById('btnUploadUncDoc');
+      const miceDocActions = document.querySelectorAll('.mice-doc-action');
+      const accDocActions = document.querySelectorAll('.acc-doc-action');
+
+      // Footer Actions
+      const footerMICE = document.getElementById('footerActionsMICE');
+      const footerACC = document.getElementById('footerActionsACC');
+
+      if (role === 'MICE') {
+        btnMICE.className = 'px-3 py-1.5 bg-blue-50 text-blue-600 font-semibold border-r border-slate-200 transition';
+        btnACC.className = 'px-3 py-1.5 bg-white text-slate-500 hover:bg-slate-50 font-normal transition';
+
+        // Giai đoạn thực hiện dịch vụ & Hạn thanh toán Corp: MICE được sửa
+        if (serviceDateRangeInput) {
+          serviceDateRangeInput.disabled = false;
+          serviceDateRangeInput.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+          serviceDateRangeInput.classList.add('bg-white', 'text-slate-800');
+        }
+        if (corpPaymentDeadlineInput) {
+          corpPaymentDeadlineInput.disabled = false;
+          corpPaymentDeadlineInput.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+          corpPaymentDeadlineInput.classList.add('bg-white', 'text-slate-800');
+        }
+
+        paymentAmountInput.disabled = false;
+        paymentAmountInput.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+        paymentAmountInput.classList.add('bg-white', 'text-slate-800');
+
+        paymentDeadlineInput.disabled = false;
+        paymentDeadlineInput.classList.remove('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+        paymentDeadlineInput.classList.add('bg-white', 'text-slate-800');
+
+        // Mục 4 và 5: Cả MICE và ACC đều được thao tác upload/xóa
+        btnUploadInternalDoc.disabled = false;
+        btnUploadInternalDoc.className = 'text-xs text-blue-600 border border-blue-200 hover:bg-blue-50 px-2.5 py-1 rounded bg-white font-medium flex items-center gap-1 transition shadow-xs';
+
+        btnUploadUncDoc.disabled = false;
+        btnUploadUncDoc.className = 'text-xs text-blue-600 border border-blue-200 hover:bg-blue-50 px-2.5 py-1 rounded bg-white cursor-pointer font-medium flex items-center gap-1 transition shadow-xs';
+
+        footerMICE.classList.remove('hidden');
+        footerACC.classList.add('hidden');
+
+      } else if (role === 'ACC') {
+        btnACC.className = 'px-3 py-1.5 bg-blue-50 text-blue-600 font-semibold transition';
+        btnMICE.className = 'px-3 py-1.5 bg-white text-slate-500 hover:bg-slate-50 font-normal border-r border-slate-200 transition';
+
+        // Giai đoạn thực hiện dịch vụ & Hạn thanh toán Corp: ACC bị disable
+        if (serviceDateRangeInput) {
+          serviceDateRangeInput.disabled = true;
+          serviceDateRangeInput.classList.remove('bg-white', 'text-slate-800');
+          serviceDateRangeInput.classList.add('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+        }
+        if (corpPaymentDeadlineInput) {
+          corpPaymentDeadlineInput.disabled = true;
+          corpPaymentDeadlineInput.classList.remove('bg-white', 'text-slate-800');
+          corpPaymentDeadlineInput.classList.add('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+        }
+
+        paymentAmountInput.disabled = true;
+        paymentAmountInput.classList.remove('bg-white', 'text-slate-800');
+        paymentAmountInput.classList.add('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+
+        paymentDeadlineInput.disabled = true;
+        paymentDeadlineInput.classList.remove('bg-white', 'text-slate-800');
+        paymentDeadlineInput.classList.add('bg-slate-100', 'text-slate-500', 'cursor-not-allowed');
+
+        // Mục 4 và 5: Cả MICE và ACC đều được thao tác upload/xóa
+        btnUploadInternalDoc.disabled = false;
+        btnUploadInternalDoc.className = 'text-xs text-blue-600 border border-blue-200 hover:bg-blue-50 px-2.5 py-1 rounded bg-white font-medium flex items-center gap-1 transition shadow-xs';
+
+        btnUploadUncDoc.disabled = false;
+        btnUploadUncDoc.className = 'text-xs text-blue-600 border border-blue-200 hover:bg-blue-50 px-2.5 py-1 rounded bg-white cursor-pointer font-medium flex items-center gap-1 transition shadow-xs';
+
+        footerMICE.classList.add('hidden');
+        footerACC.classList.remove('hidden');
+      }
+    }
+
+    function openRejectModal() {
+      document.getElementById('rejectReasonInput').value = '';
+      document.getElementById('rejectErrorMsg').classList.add('hidden');
+      document.getElementById('rejectModal').classList.remove('hidden');
+      document.getElementById('rejectReasonInput').focus();
+    }
+
+    function closeRejectModal() {
+      document.getElementById('rejectModal').classList.add('hidden');
+    }
+
+    function confirmReject() {
+      const reason = document.getElementById('rejectReasonInput').value.trim();
+      const errorMsg = document.getElementById('rejectErrorMsg');
+      if (!reason) {
+        errorMsg.classList.remove('hidden');
+        return;
+      }
+      errorMsg.classList.add('hidden');
+      document.getElementById('badgeRequestStatus').className = "text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-0.5 rounded";
+      document.getElementById('badgeRequestStatus').textContent = "Bị từ chối";
+      alert('Kế toán đã TỪ CHỐI đề nghị duyệt chi!\nLý do: ' + reason);
+      closeRejectModal();
+    }
+
+    function approveRequestACC() {
+      const accNum = document.getElementById('accountNumberInput').value.trim();
+      const accName = document.getElementById('accountNameInput').value.trim();
+      if (!accNum || !accName) {
+        alert('Vui lòng kiểm tra lại thông tin thụ hưởng: Số tài khoản và Tên chủ tài khoản không được để trống!');
+        return;
+      }
+      document.getElementById('badgeRequestStatus').className = "text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded";
+      document.getElementById('badgeRequestStatus').textContent = "Đã thanh toán (Thành công)";
+      alert('Kế toán DUYỆT CHI và XÁC NHẬN ĐÃ THANH TOÁN thành công cho đơn Visa Nguyễn Ngọc Thành (56.000 VNĐ)!');
+    }
+
+    function copyFieldValue(fieldId) {
+      const input = document.getElementById(fieldId);
+      input.select();
+      input.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(input.value);
+      alert('Đã sao chép: ' + input.value);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      alert('Đã sao chép: ' + text);
+    }
+
+    function submitFormMICE() {
+      const serviceDate = document.getElementById('serviceDateRangeInput') ? document.getElementById('serviceDateRangeInput').value.trim() : '';
+      const deadline = document.getElementById('paymentDeadlineInput') ? document.getElementById('paymentDeadlineInput').value.trim() : '';
+      const accNum = document.getElementById('accountNumberInput').value.trim();
+      const accName = document.getElementById('accountNameInput').value.trim();
+      const amount = document.getElementById('paymentAmountInput').value.trim();
+      const cleanNum = parseFloat(amount.replace(/[^0-9]/g, '')) || 0;
+
+      const corpDeadline = document.getElementById('corpPaymentDeadlineInput') ? document.getElementById('corpPaymentDeadlineInput').value.trim() : '';
+
+      if (!serviceDate) {
+        alert('Vui lòng điền Giai đoạn thực hiện dịch vụ!');
+        return;
+      }
+      if (!corpDeadline) {
+        alert('Vui lòng điền Hạn thanh toán của Corp cho đơn hàng!');
+        return;
+      }
+      if (!amount || !deadline || !accNum || !accName) {
+        alert('Vui lòng nhập đầy đủ Số tiền, Thời hạn thanh toán NCC, Số tài khoản và Tên chủ tài khoản thụ hưởng!');
+        return;
+      }
+      if (cleanNum >= 5000000) {
+        alert('Lưu ý Kế toán: Đơn hàng từ 5 triệu trở lên, vui lòng đảm bảo đã đính kèm file Hợp đồng NCC trước khi gửi!');
+      }
+
+      document.getElementById('badgeRequestStatus').className = "text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-0.5 rounded";
+      document.getElementById('badgeRequestStatus').textContent = "Chờ Leader MICE duyệt (Cấp 1)";
+      alert('Gửi đề nghị duyệt chi số tiền ' + amount + ' VNĐ thành công!\nTrạng thái: Chờ Leader MICE duyệt (Cấp 1).');
+    }
+
+    function saveDraft() {
+      alert('Đã lưu nháp đề nghị duyệt chi thành công!');
+    }
+
+    function handleInternalDocUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const container = document.getElementById('internalDocListContainer');
+        const newRow = document.createElement('div');
+        newRow.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded text-xs";
+        newRow.innerHTML = `
+          <div class="flex items-center gap-2 text-slate-700">
+            <i class="fa-solid fa-file-lines text-slate-500 text-sm"></i>
+            <div>
+              <span class="font-medium">${file.name}</span>
+              <span class="text-[10px] text-blue-600 font-medium ml-1.5">[Chứng từ nội bộ mới tải lên]</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="alert('Đang mở xem file vừa upload...')" class="text-blue-600 hover:text-blue-700 font-medium">Xem</button>
+            <button onclick="this.closest('.flex').remove()" class="text-slate-400 hover:text-slate-600 text-xs font-medium" title="Xóa">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(newRow);
+        alert('Đã tải lên chứng từ nội bộ: ' + file.name);
+      }
+    }
+
+    function handleUncDocUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const container = document.getElementById('uncDocListContainer');
+        const newRow = document.createElement('div');
+        newRow.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded text-xs";
+        newRow.innerHTML = `
+          <div class="flex items-center gap-2 text-slate-700">
+            <i class="fa-solid fa-file-invoice-dollar text-slate-500 text-sm"></i>
+            <div>
+              <span class="font-medium">${file.name}</span>
+              <span class="text-[10px] text-blue-600 font-medium ml-1.5">[Ủy nhiệm chi mới tải lên]</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="alert('Đang mở xem file vừa upload...')" class="text-blue-600 hover:text-blue-700 font-medium">Xem</button>
+            <button onclick="this.closest('.flex').remove()" class="text-slate-400 hover:text-slate-600 text-xs font-medium" title="Xóa">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(newRow);
+        alert('Đã tải lên Ủy nhiệm chi UNC: ' + file.name);
+      }
+    }
+
+    function removeUncRow() {
+      if (confirm('Bạn có chắc muốn xóa chứng từ Ủy nhiệm chi này?')) {
+        const row = document.getElementById('rowUncDoc');
+        if (row) row.remove();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      switchView('MICE');
+    });
+  </script>
+</body>
+</html>
